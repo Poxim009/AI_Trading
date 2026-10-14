@@ -309,7 +309,15 @@ def print_metrics_table(metrics: dict, title: str = "Backtest Results", period_i
 
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Automated Strategy Validation Version 5 (Linux)")
+    parser.add_argument("--bars", type=int, default=12000, help="Number of historical candles (default: 12000)")
+    parser.add_argument("--symbol", type=str, default="XAUUSD", help="Asset symbol (default: XAUUSD)")
+    parser.add_argument("--timeframe", type=str, default="M15", help="Timeframe (default: M15)")
+    args = parser.parse_args()
+
     params = load_params()
-    df_raw = load_history("XAUUSD", "M15", bars=12000)
+    df_raw = load_history(args.symbol, args.timeframe, bars=args.bars)
     res = run_backtest(df_raw, params, export_csv=True)
-    print_metrics_table(res, "Automated Strategy Validation Version 5 (Linux)")
+    print_metrics_table(res, f"Automated Strategy Validation Version 5 (Linux) [{args.bars:,} Bars]")
+
