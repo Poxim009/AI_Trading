@@ -13,7 +13,7 @@
 
 ---
 
-## 📌 Executive Summary (บทสรุปผู้บริหาร)
+## 📌 Executive Summary
 
 **AI-Powered Autonomous Gold Trading System (ai_trading_bot_2)** คือระบบเทรดทองคำ (`XAUUSD`) อัตโนมัติระดับสถาบันที่ถูกพัฒนาขึ้นเพื่อแก้ปัญหาความเหนื่อยล้าและอคติทางอารมณ์ของมนุษย์ โดยผสมผสาน **การวิเคราะห์เชิงปริมาณ (Quantitative Analysis)**, **โมเดลปัญญาประดิษฐ์อ่านข่าวเศรษฐกิจมหภาค (Generative AI News Sentiment)**, และ **โครงสร้างพื้นฐานเซิร์ฟเวอร์ส่วนตัวต้นทุน 0 บาท (Self-Hosted Ubuntu Cloud & Docker)** เข้าด้วยกันอย่างสมบูรณ์แบบ ควบคุมและสั่งการได้แบบเรียลไทม์ผ่านมือถือบน **Discord Command Center**
 
