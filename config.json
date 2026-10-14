@@ -1,0 +1,42 @@
+{
+  "trading": {
+    "symbol": "XAUUSD",
+    "timeframe": "M15",
+    "risk_percent": 1.0,
+    "max_open_trades": 1,
+    "daily_loss_limit_percent": 3.0,
+    "magic_number": 123456,
+    "loop_seconds": 30
+  },
+  "news": {
+    "model": "gemini-3.8-flash",
+    "check_interval_minutes": 30,
+    "max_article_age_hours": 24,
+    "sentiment_max_age_hours": 2,
+    "rss_feeds": [
+      "https://www.investing.com/rss/news_11.rss",
+      "https://www.investing.com/rss/news_1.rss",
+      "https://www.cnbc.com/id/10000115/device/rss/rss.html"
+    ]
+  },
+  "overseer": {
+    "model": "gemini-3.8-flash",
+    "check_interval_minutes": 15,
+    "max_ai_runs_per_day": 3,
+    "trigger_consecutive_losses": 4,
+    "weekly_review_day": "sunday",
+    "weekly_review_hour": 21,
+    "editable_files": [
+      "strategy.py",
+      "strategy_params.json"
+    ]
+  },
+  "backtest": {
+    "history_bars": 12000,
+    "train_ratio": 0.7,
+    "min_trades": 30,
+    "max_drawdown_percent": 20.0,
+    "spread_dollars": 0.3,
+    "initial_balance": 10000
+  }
+}

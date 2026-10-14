@@ -1,0 +1,28 @@
+{
+  "version": 5,
+  "sma_period": 50,
+  "rsi_period": 14,
+  "rsi_buy_level": 45,
+  "rsi_sell_level": 55,
+  "atr_period": 14,
+  "atr_sl_mult": 1.5,
+  "atr_tp_mult": 2.0,
+  "adx_period": 14,
+  "adx_threshold": 25,
+  "use_sentiment_filter": true,
+  "passed_validation": true,
+  "updated_by": "user_approval_v5",
+  "updated_at": "2026-10-12T18:56:22.918542",
+  "validation_metrics": {
+    "net_profit": 1321.89,
+    "trades": 76,
+    "buy_trades": 43,
+    "sell_trades": 33,
+    "win_rate": 50.0,
+    "buy_win_rate": 53.49,
+    "sell_win_rate": 45.45,
+    "profit_factor": 1.33,
+    "max_drawdown_pct": 5.89,
+    "final_balance": 11321.89
+  }
+}

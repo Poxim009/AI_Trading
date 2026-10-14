@@ -1,0 +1,43 @@
+# ==============================================================================
+# ai-trading.service — Systemd Service for AI Trading Bot 2 (Ubuntu 24.04 LTS)
+# ==============================================================================
+#
+# คำแนะนำการติดตั้งบน Ubuntu Server:
+# 1. แก้ไข User และ WorkingDirectory ให้ตรงกับตำแหน่งจริงบน Server ของคุณ
+#    (เช่น /home/ubuntu/ai_trading_bot_2 หรือ /opt/ai_trading_bot_2)
+# 2. คัดลอกไฟล์นี้ไปยัง systemd directory:
+#    sudo cp ai-trading.service /etc/systemd/system/
+# 3. โหลด systemd daemon ใหม่:
+#    sudo systemctl daemon-reload
+# 4. สั่งให้ทำงานอัตโนมัติตอนเปิดเครื่อง (Enable):
+#    sudo systemctl enable ai-trading
+# 5. สั่งเริ่มทำงานทันที (Start):
+#    sudo systemctl start ai-trading
+# 6. ตรวจสอบสถานะการทำงาน:
+#    sudo systemctl status ai-trading
+# 7. ดูสด Real-time Logs:
+#    sudo journalctl -u ai-trading -f
+# ==============================================================================
+
+[Unit]
+Description=AI Trading Bot 2 (Linux & Cloud MetaApi Edition)
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pacharaphon-sopa
+Group=pacharaphon-sopa
+WorkingDirectory=/home/pacharaphon-sopa/ai_trading_bot_2
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/home/pacharaphon-sopa/ai_trading_bot_2/.venv/bin/python3 -u run_all.py
+Restart=always
+RestartSec=10
+KillMode=mixed
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

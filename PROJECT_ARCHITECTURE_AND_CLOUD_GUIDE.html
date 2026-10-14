@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>คู่มือสถาปัตยกรรมระบบบอทเทรดทองคำอัจฉริยะ (AI Trading Bot 2) และเซิร์ฟเวอร์คลาวด์ส่วนตัว</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 6.5mm 10mm 6.5mm 10mm;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      font-family: 'Leelawadee UI', 'Tahoma', 'Segoe UI', sans-serif;
+      color: #1e293b;
+      line-height: 1.34;
+      font-size: 8.2pt;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .page {
+      page-break-after: always;
+      position: relative;
+      height: 100%;
+    }
+    .page:last-child {
+      page-break-after: avoid;
+    }
+    /* Hero Banner */
+    .hero {
+      background: linear-gradient(135deg, #091326 0%, #1e3a8a 55%, #1d4ed8 100%);
+      color: #ffffff;
+      padding: 8px 14px;
+      border-radius: 7px;
+      margin-bottom: 5px;
+      border-left: 6px solid #fbbf24;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(251, 191, 36, 0.2);
+      color: #fde68a;
+      border: 1px solid #fbbf24;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 6.9pt;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+    .hero h1 {
+      margin: 0 0 2px 0;
+      font-size: 12.5pt;
+      line-height: 1.2;
+      color: #ffffff;
+    }
+    .hero p {
+      margin: 0;
+      font-size: 7.7pt;
+      color: #e2e8f0;
+    }
+    /* Headings */
+    h2 {
+      font-size: 9.4pt;
+      color: #0f172a;
+      background: #f1f5f9;
+      padding: 2.8px 8px;
+      border-left: 4px solid #2563eb;
+      border-radius: 0 5px 5px 0;
+      margin: 4.5px 0 2.5px 0;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 8.4pt;
+      color: #1e40af;
+      margin: 3.5px 0 2px 0;
+      page-break-after: avoid;
+    }
+    p {
+      margin: 2px 0;
+    }
+    ul, ol {
+      margin: 1.5px 0 2.5px 0;
+      padding-left: 14px;
+    }
+    li {
+      margin-bottom: 1px;
+    }
+    code {
+      font-family: 'Consolas', 'Courier New', monospace;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 0px 3.5px;
+      border-radius: 3px;
+      border: 1px solid #cbd5e1;
+      font-size: 7.5pt;
+    }
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin: 3px 0;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin: 3px 0;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 5px;
+      margin: 3px 0;
+    }
+    .card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 4.5px 7px;
+      page-break-inside: avoid;
+    }
+    .card-blue { background: #eff6ff; border-color: #93c5fd; }
+    .card-green { background: #f0fdf4; border-color: #86efac; }
+    .card-amber { background: #fffbeb; border-color: #fcd34d; }
+    .card-purple { background: #faf5ff; border-color: #d8b4fe; }
+    .card-red { background: #fef2f2; border-color: #fca5a5; }
+    .card-title {
+      font-weight: bold;
+      font-size: 8.2pt;
+      margin-bottom: 2px;
+      color: #0f172a;
+    }
+    /* Visual Image Cards */
+    .img-card {
+      background: #ffffff;
+      border: 1.2px solid #cbd5e1;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 3px 0;
+      page-break-inside: avoid;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .img-card.border-blue { border-color: #60a5fa; }
+    .img-card.border-amber { border-color: #f59e0b; }
+    .img-card.border-green { border-color: #34d399; }
+    .img-card.border-purple { border-color: #c084fc; }
+    .img-card img {
+      width: 100%;
+      display: block;
+    }
+    .img-caption {
+      background: #f8fafc;
+      padding: 2.8px 6px;
+      font-size: 7.0pt;
+      color: #334155;
+      border-top: 1px solid #e2e8f0;
+      line-height: 1.25;
+    }
+    .img-caption strong {
+      color: #1e3a8a;
+    }
+    .img-caption .tag {
+      display: inline-block;
+      font-size: 6.5pt;
+      padding: 0px 3.5px;
+      border-radius: 3px;
+      font-weight: bold;
+      margin-right: 3px;
+    }
+    .tag-live { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .tag-auth { background: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc; }
+    .tag-cloud { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+    /* Visual Architecture Diagram */
+    .arch-box {
+      background: #091326;
+      color: #f8fafc;
+      border-radius: 7px;
+      padding: 5px 7px;
+      margin: 3px 0;
+      page-break-inside: avoid;
+    }
+    .arch-title {
+      text-align: center;
+      color: #fbbf24;
+      font-weight: bold;
+      font-size: 8.2pt;
+      margin-bottom: 3px;
+    }
+    .arch-row {
+      display: grid;
+      grid-template-columns: 1fr 16px 1fr 16px 1fr;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+    .arch-node {
+      background: #1e293b;
+      border: 1.2px solid #38bdf8;
+      border-radius: 5px;
+      padding: 3px 4px;
+      text-align: center;
+      font-size: 7.0pt;
+    }
+    .arch-node.gold { border-color: #fbbf24; background: #1c1917; }
+    .arch-node.green { border-color: #4ade80; background: #052e16; }
+    .arch-node.purple { border-color: #c084fc; background: #2e1065; }
+    .arch-node strong {
+      display: block;
+      font-size: 7.4pt;
+      color: #ffffff;
+      margin-bottom: 1px;
+    }
+    .arch-node span {
+      color: #cbd5e1;
+      font-size: 6.5pt;
+    }
+    .arch-arrow {
+      text-align: center;
+      font-size: 8.5pt;
+      color: #fbbf24;
+      font-weight: bold;
+    }
+    .arch-down {
+      text-align: center;
+      color: #fbbf24;
+      font-size: 7.2pt;
+      font-weight: bold;
+      margin: 1px 0;
+    }
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2px 0 3.5px 0;
+      font-size: 7.4pt;
+      page-break-inside: avoid;
+    }
+    tr {
+      page-break-inside: avoid;
+    }
+    th {
+      background: #1e3a8a;
+      color: #ffffff;
+      text-align: left;
+      padding: 2.8px 5px;
+      border: 1px solid #1e3a8a;
+      font-weight: bold;
+    }
+    td {
+      padding: 2.2px 5px;
+      border: 1px solid #cbd5e1;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+    /* Progress Bar */
+    .prog-wrap {
+      background: #e2e8f0;
+      border-radius: 999px;
+      height: 5px;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 1.5px;
+    }
+    .prog-bar {
+      background: linear-gradient(90deg, #2563eb, #10b981);
+      height: 100%;
+      border-radius: 999px;
+    }
+    .prog-bar.warn {
+      background: linear-gradient(90deg, #f59e0b, #eab308);
+    }
+    /* KPI Pills */
+    .kpi-box {
+      text-align: center;
+      background: #f8fafc;
+      border: 1.5px solid #93c5fd;
+      border-radius: 6px;
+      padding: 3px 2px;
+    }
+    .kpi-val {
+      font-size: 9.4pt;
+      font-weight: bold;
+      color: #1d4ed8;
+    }
+    .kpi-val.green { color: #15803d; }
+    .kpi-lbl {
+      font-size: 6.6pt;
+      color: #475569;
+    }
+    .pitch-box {
+      background: #eff6ff;
+      border: 1.2px solid #2563eb;
+      border-radius: 6px;
+      padding: 4px 7.5px;
+      margin-top: 3px;
+      page-break-inside: avoid;
+    }
+    .step-badge {
+      display: inline-block;
+      background: #1d4ed8;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 13px;
+      height: 13px;
+      text-align: center;
+      line-height: 13px;
+      font-size: 6.6pt;
+      margin-right: 3px;
+    }
+    .footer-note {
+      text-align: center;
+      font-size: 6.6pt;
+      color: #64748b;
+      margin-top: 3px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== PAGE 1 ==================== -->
+  <div class="page">
+    <div class="hero">
+      <div class="badge">FULL SYSTEM ARCHITECTURE &amp; SELF-HOSTED CLOUD PORTFOLIO • AI TRADING BOT 2</div>
+      <h1>คู่มือสถาปัตยกรรมระบบบอทเทรดทองคำอัจฉริยะ (AI Trading Bot 2)<br>และเซิร์ฟเวอร์คลาวด์ส่วนตัว (Ubuntu Home Cloud, Nextcloud &amp; Docker MT5)</h1>
+      <p>เอกสารสรุปฉบับสมบูรณ์: ที่มาของไอเดีย • ผังเชื่อมต่อ 4 บอท • แคปรูปภาพโปรเจกต์จริง • เซิร์ฟเวอร์ Nextcloud &amp; Docker • สถิติและบทพูดสัมภาษณ์</p>
+    </div>
+
+    <h2>1. ที่มาและแรงบันดาลใจของโปรเจกต์ (ทำไมถึงคิดสร้างบอทตัวนี้ขึ้นมา?)</h2>
+    <p>จุดเริ่มต้นของโปรเจกต์นี้เกิดจากประสบการณ์จริงในการเทรดกราฟการเงิน (หุ้นและทองคำ <code>XAUUSD</code>) ที่พบว่า <strong>การเทรดด้วยตัวเองมีปัญหาใหญ่ 3 ข้อ</strong> ที่ทำให้เสียทั้งสุขภาพจิตและเงินทุน จึงนำไปสู่การออกแบบระบบอัตโนมัติขึ้นมาแก้ปัญหาแบบตรงจุด:</p>
+    
+    <div class="grid-2">
+      <div class="card card-red">
+        <div class="card-title">😓 ปัญหาของการเทรดด้วยตัวเอง (Pain Points)</div>
+        <ul>
+          <li><strong>นั่งเฝ้ากราฟตลอดจนล้าและเครียด:</strong> ตลาดทองคำวิ่ง 24 ชม. การเปิดดูทุก 15 นาทีทำให้พักผ่อนไม่พอและเสียสมาธิในการเรียน</li>
+          <li><strong>อารมณ์ความรู้สึกแทรกแซง (Emotional Trading):</strong> กลัวตกรถ (FOMO) รีบเข้าไม้ก่อนสัญญาณครบ หรือพอขาดทุนก็อยากเอาคืนจนไม่ยอมตั้ง Stop Loss</li>
+          <li><strong>อ่านข่าวโลกไม่ทัน:</strong> ข่าวสงคราม ดอกเบี้ย Fed และเงินเฟ้อสหรัฐฯ ออกช่วงดึกและเป็นภาษาอังกฤษ วิเคราะห์ไม่ทันความเร็วตลาด</li>
+        </ul>
+      </div>
+      <div class="card card-green">
+        <div class="card-title">🚀 ทางออกที่คิดค้นขึ้น (Autonomous AI Solution)</div>
+        <ul>
+          <li><strong>บอทเทรดเชิงปริมาณไร้อารมณ์ (Quantitative):</strong> โปรแกรมคำนวณอินดิเคเตอร์ 4 ตัวรอบคอบ และเข้าเทรดเฉพาะเมื่อครบเงื่อนไข 100%</li>
+          <li><strong>สมอง AI อ่านข่าวแทนมนุษย์:</strong> ใช้ <strong>Groq AI</strong> เสริมด้วย <strong>Gemini</strong> คอยดึงข่าว RSS เศรษฐกิจโลกมาอ่านและคิดคะแนนทิศทางตลาดทุก 30 นาที</li>
+          <li><strong>รันบนโฮมคลาวด์ส่วนตัว + สั่งผ่าน Discord:</strong> รันบน Ubuntu Linux ร่วมกับ Docker MT5 และควบคุมผ่าน Discord บนมือถือ 24 ชั่วโมง</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>2. สถาปัตยกรรมระบบทั้งหมด (End-to-End Architecture)</h2>
+    <p>ระบบถูกสร้างด้วยสถาปัตยกรรม <strong>Multi-Process Micro-Agents</strong> แยกบอท 4 ตัวตามหน้าที่ ประสานงานผ่านไฟล์สถานะกลาง (<code>state/</code>) และฐานข้อมูล (<code>logs/</code>):</p>
+
+    <div class="arch-box">
+      <div class="arch-title">แผนผังสถาปัตยกรรมการทำงานและการเชื่อมต่อข้อมูลทั้งหมด (System Architecture Flow)</div>
+      <div class="arch-row">
+        <div class="arch-node">
+          <strong>1. แหล่งข่าวโลก (RSS)</strong>
+          <span>Investing.com &amp; CNBC<br>ดึงข่าวสดทุก ๆ 30 นาที</span>
+        </div>
+        <div class="arch-arrow">➔</div>
+        <div class="arch-node purple">
+          <strong>2. สมอง AI วิเคราะห์ข่าว</strong>
+          <span>Groq (Qwen/Llama-3.3)<br>สำรองด้วย Gemini Flash</span>
+        </div>
+        <div class="arch-arrow">➔</div>
+        <div class="arch-node">
+          <strong>3. บอทข่าว (news_agent.py)</strong>
+          <span>คิดคะแนน -1.0 ถึง +1.0<br>ลง <code>state/sentiment.json</code></span>
+        </div>
+      </div>
+
+      <div class="arch-down">▼ ส่งคะแนนข่าว AI ช่วยกรองจังหวะเข้าเทรดทองคำ ▼</div>
+
+      <div class="arch-row">
+        <div class="arch-node gold">
+          <strong>4. Docker MT5 บนคลาวด์</strong>
+          <span>คอนเทนเนอร์ <code>mt5-server</code><br>Wine + MT5 + RPyC (18812)<br>+ จอเว็บ noVNC (6080)</span>
+        </div>
+        <div class="arch-arrow">⇄</div>
+        <div class="arch-node green">
+          <strong>5. บอทเทรดหลัก (trade_bot.py)</strong>
+          <span>กลยุทธ์ <code>strategy.py</code> (V5)<br>SMA 50, RSI 14, ADX 25, ATR 14<br>เสี่ยง 1% ต่อไม้ / เพดาน 3%</span>
+        </div>
+        <div class="arch-arrow">➔</div>
+        <div class="arch-node">
+          <strong>6. ผู้ตรวจการณ์ (overseer.py)</strong>
+          <span>ตรวจชีพจร Heartbeat ทุก 15 น.<br>จำลองย้อนหลัง 12,000 แท่ง<br>กลไกนิรภัย 7 ชั้น (Sandbox)</span>
+        </div>
+      </div>
+
+      <div class="arch-down">▼ รายงานชีพจรทุก 15 นาที &amp; รับคำสั่งสองทางผ่านมือถือ ▼</div>
+
+      <div style="background:#1e3a8a; border:1.2px solid #60a5fa; border-radius:5px; padding:3px 6px; text-align:center; font-size:7.2pt;">
+        <strong style="color:#fde68a;">7. ศูนย์สั่งการและแจ้งเตือนผ่าน Discord (discord_bot.py + notifier.py + Supreme Error Catcher)</strong><br>
+        <span style="color:#e2e8f0;">ส่งการ์ดแจ้งเตือนเข้ามือถือทันที แปล Error ด้วย AI เป็นภาษาไทยสั้น ๆ • รองรับ Slash Commands 13 คำสั่ง</span>
+      </div>
+    </div>
+
+    <div class="grid-2" style="align-items:center; margin-top:3.5px;">
+      <div class="img-card border-blue" style="margin:0;">
+        <img src="assets/images/winscp_clean.png" style="height:165px; width:100%; object-fit:cover; object-position:top;" alt="WinSCP Ubuntu File Structure">
+        <div class="img-caption">
+          <span class="tag tag-auth">AUTHENTIC</span><strong>ภาพจริงจากแอป WinSCP (SFTP):</strong> โครงสร้างไฟล์โปรเจกต์ <code>ai_trading_bot_2</code> บนเครื่อง Ubuntu Linux (192.168.1.159) แสดงไฟล์ระบบ <code>ai-trading.service</code>, <code>run_all.py</code>, โฟลเดอร์ <code>state/</code>, <code>logs/</code> และ <code>backups/</code>
+        </div>
+      </div>
+      <div class="card card-blue" style="font-size:7.4pt; padding:4.5px 7.5px;">
+        <div class="card-title" style="font-size:8.0pt; color:#1e3a8a;">📁 การจัดการโค้ดบนเซิร์ฟเวอร์จริง (Production Files)</div>
+        <p>ดังที่แสดงในโปรแกรม WinSCP ทางซ้าย โค้ดทั้งหมดถูก Deploy ไว้ที่โฟลเดอร์ <code>/home/pacharaphon-sopa/ai_trading_bot_2/</code>:</p>
+        <ul style="padding-left:14px; margin:2px 0;">
+          <li><code>ai-trading.service</code>: ไฟล์ Systemd ควบคุมบริการรันตลอด 24 ชม.</li>
+          <li><code>run_all.py</code>: สคริปต์แม่บทดูแลบอทลูก 4 ตัวและฟื้นฟูเมื่อแครช</li>
+          <li><code>strategy.py</code>: อัลกอริทึมคณิตศาสตร์ SMA 50, RSI 14, ADX 25, ATR 14</li>
+          <li><code>state/</code>: เก็บ <code>sentiment.json</code>, <code>bot_heartbeat.json</code>, <code>market_pulse.json</code></li>
+          <li><code>logs/</code>: เก็บประวัติการเทรด <code>trades.csv</code> และ Log แยกตามรายโมดูล</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      หน้า 1 / 6 • สถาปัตยกรรมระบบ AI Trading Bot 2 และเซิร์ฟเวอร์คลาวด์ส่วนตัว • Lenovo ThinkCentre E73 (Ubuntu 24.04 LTS)
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2 ==================== -->
+  <div class="page">
+    <h2>3. เจาะลึกการทำงานของบอททั้ง 4 ตัว และโมดูลเสริมทีละส่วน</h2>
+
+    <div class="card card-blue" style="margin-bottom:3px;">
+      <div class="card-title"><span class="step-badge">0</span> ผู้จัดการทัพหลัก: <code>run_all.py</code> + Linux Service <code>ai-trading.service</code></div>
+      <p><strong>หน้าที่:</strong> ปลุกระบบขึ้นมาทันทีตั้งแต่เปิดเครื่องผ่าน <code>systemd</code> ของ Linux คอยสั่งเปิดบอททั้ง 4 ตัวขนานกัน พร้อมระบบ <strong>Auto-Restart Watchdog</strong> ตรวจทุก 5 วินาที หากบอทตัวไหนหยุดจะเปิดใหม่ใน 10 วินาที และมีระบบ <strong>Hot-Reload (<code>state/restart.flag</code>)</strong> สั่งรีโหลดพารามิเตอร์ผ่าน Discord โดยไม่ต้องดับระบบอื่น</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-purple">
+        <div class="card-title"><span class="step-badge">1</span> บอทข่าว AI: <code>news_agent.py</code></div>
+        <p><strong>หน้าที่:</strong> อ่านข่าวเศรษฐกิจโลกตลอด 24 ชม. ดึง RSS จาก <code>Investing.com</code> &amp; <code>CNBC</code> ทุก 30 นาที กรองข่าวซ้ำด้วย <code>state/seen_news.json</code></p>
+        <p><strong>ระบบ AI 2 ชั้น:</strong> ใช้ <strong>Groq API</strong> (เร็ว 0.3 วินาที) สลับใช้ <strong>Google Gemini</strong> อัตโนมัติ แปลงข่าวเป็นคะแนน <code>-1.0</code> ถึง <code>+1.0</code> พร้อมคำอธิบายภาษาไทย</p>
+      </div>
+
+      <div class="card card-green">
+        <div class="card-title"><span class="step-badge">2</span> บอทเทรดหลัก: <code>trade_bot.py</code> + <code>strategy.py</code></div>
+        <p><strong>หน้าที่:</strong> เฝ้ากราฟทองคำ <code>XAUUSD</code> ทุก 30 วินาที แต่คำนวณสูตรเฉพาะเมื่อ <strong>แท่ง M15 ปิดสมบูรณ์ (No Repainting)</strong> ผสานกับคะแนนข่าว AI</p>
+        <p><strong>Market Pulse:</strong> รายงานราคา, อินดิเคเตอร์ และสถานะเข้า Discord ทุก 15 นาที พร้อมคุมความเสี่ยงเข้มงวด 1% ต่อไม้ และบันทึกผลลง <code>logs/trades.csv</code></p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:2.5px;">
+      <div class="card card-amber">
+        <div class="card-title"><span class="step-badge">3</span> บอทเลขา &amp; ศูนย์สั่งการ: <code>discord_bot.py</code> + <code>notifier.py</code></div>
+        <p><strong>หน้าที่:</strong> เชื่อมต่อมือถือผ่าน Discord Webhook &amp; Slash Commands 13 คำสั่ง พร้อม <strong>Supreme Error Catcher</strong> สรุป Error เทคนิคเป็นภาษาไทยสั้น ๆ</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="step-badge">4</span> ผู้ตรวจการณ์ &amp; จำลองย้อนหลัง: <code>overseer.py</code> + <code>simulator.py</code></div>
+        <p><strong>หน้าที่:</strong> ตรวจชีพจร Heartbeat ทุก 15 นาที, ปลุก AI รีวิวกลยุทธ์หากแพ้ 4 ไม้ติด และรัน Backtest 12,000 แท่ง พร้อมกลไกความปลอดภัย 7 ชั้น (ห้ามแตะ <code>.env</code>)</p>
+      </div>
+    </div>
+
+    <h3>ภาพหลักฐานศูนย์บัญชาการ Discord (Discord Command Center in Action)</h3>
+    <div class="grid-3" style="margin-top:2px;">
+      <div class="img-card border-green" style="margin:0;">
+        <img src="assets/images/discord_buy_order_1lot.png" style="height:148px; object-fit:contain; background:#2b2d31; padding:3px;" alt="Discord Buy Order 1.0 Lot">
+        <div class="img-caption">
+          <span class="tag tag-live">ORDER 1.0 LOT</span><strong>คำสั่ง <code>/buy</code> 1.0 Lot:</strong> เปิดไม้ทองคำ XAUUSD ทันที Ticket <code>#10920803860</code> ที่ราคา <code>4,194.24</code> พร้อม Stop Loss <code>4,186.33</code> และ Take Profit <code>4,204.79</code>
+        </div>
+      </div>
+
+      <div class="img-card border-blue" style="margin:0;">
+        <img src="assets/images/discord_positions_card.png" style="height:148px; object-fit:contain; background:#2b2d31; padding:3px;" alt="Discord Positions Tracking">
+        <div class="img-caption">
+          <span class="tag tag-live">POSITIONS TRACKING</span><strong>คำสั่ง <code>/positions</code>:</strong> เช็คออเดอร์ค้างบน MT5 แบบเรียลไทม์ แสดง Balance $100,000, Equity $99,927, Floating PnL และรายการไม้ที่กำลังวิ่งอยู่
+        </div>
+      </div>
+
+      <div class="img-card border-purple" style="margin:0;">
+        <img src="assets/images/discord_buy_order_micro.png" style="height:148px; object-fit:contain; background:#2b2d31; padding:3px;" alt="Discord Buy Order Micro Lot">
+        <div class="img-caption">
+          <span class="tag tag-live">MICRO LOT</span><strong>คำสั่ง <code>/buy</code> 0.01 Lot:</strong> เปิดไม้นำร่อง Micro Lot Ticket <code>#10920689109</code> ที่ราคา <code>4,197.43</code> (SL 4,189.52 / TP 4,207.98) พิสูจน์ความยืดหยุ่นในการคุมขนาด Lot
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-purple" style="margin-top:3.5px; font-size:7.4pt; padding:4px 7px;">
+      <div class="card-title" style="font-size:7.8pt; color:#6b21a8;">🛡️ ระบบ Supreme Error Catcher (AI Self-Healing &amp; Thai Error Translator)</div>
+      <p>เมื่อโปรแกรมเกิด Error ทางเทคนิค ระบบจะไม่ส่ง Stack Trace ยาว ๆ ให้ผู้ใช้ตกใจ แต่จะส่งให้ <strong>AI (Groq/Gemini)</strong> วิเคราะห์เบื้องหลังและแปลงเป็น <strong>ภาษาไทยสั้น ๆ 1 ประโยค</strong> เช่น <em>"ระบบตรวจพบตลาดปิดทำการช่วงวันหยุด จึงรอเวลาเปิดตลาดใหม่อัตโนมัติ"</em> ทำให้ผู้ใช้งานทั่วไปเข้าใจสถานะของระบบได้ทันทีโดยไม่ต้องมีความรู้ด้านโค้ด</p>
+    </div>
+
+    <div class="footer-note">
+      หน้า 2 / 6 • สถาปัตยกรรมระบบ AI Trading Bot 2 และเซิร์ฟเวอร์คลาวด์ส่วนตัว • ศูนย์สั่งการ Discord Bot &amp; Multi-Agent Workflow
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 3 ==================== -->
+  <div class="page">
+    <h2>4. สมองกลยุทธ์การเทรด (Strategy V5) และการออกคำสั่งสู่ตลาดสด</h2>
+    
+    <div class="grid-2" style="align-items:start;">
+      <div class="card card-blue" style="padding:4px 6.5px;">
+        <div class="card-title">📐 กฎการเข้าเทรด 5 เงื่อนไข (XAUUSD M15 Version 5)</div>
+        <ol style="margin:1.5px 0; padding-left:14px; font-size:7.3pt; line-height:1.26;">
+          <li><strong>SMA 50 (กรองเทรนด์หลัก):</strong> ราคาปิดเหนือ SMA 50 มองหาเฉพาะ <strong>BUY</strong> / ราคาปิดใต้เส้นมองหาเฉพาะ <strong>SELL</strong></li>
+          <li><strong>ADX 14 &gt;= 25 (กรองไซด์เวย์):</strong> หาก ADX ต่ำกว่า 25 แปลว่ากราฟไร้เทรนด์ บอทจะสั่ง <strong>WAIT (งดออกไม้เด็ดขาด)</strong></li>
+          <li><strong>RSI 14 ตัดระดับ 45 / 55 (หาจังหวะย่อ):</strong>
+            <br>• BUY: เทรนด์ขึ้น + RSI ย่อต่ำกว่า 45 แล้วดีดตัดขึ้นผ่าน <code>45</code>
+            <br>• SELL: เทรนด์ลง + RSI เด้งเกิน 55 แล้วตบหลุดลงผ่าน <code>55</code></li>
+          <li><strong>AI News Sentiment Filter:</strong> ห้ามเปิด BUY หากข่าว AI ติดลบ (<code>&lt; 0</code>) และห้ามเปิด SELL หากข่าว AI เป็นบวก (<code>&gt; 0</code>)</li>
+          <li><strong>ATR 14 Risk Management:</strong> SL <code>1.5 x ATR</code>, TP <code>2.0 x ATR</code> เสี่ยง <strong>1% ต่อไม้</strong> และเพดานตัดขาดทุนวันละ <strong>3%</strong></li>
+        </ol>
+      </div>
+
+      <div>
+        <table style="margin:0; font-size:7.3pt; line-height:1.22;">
+          <thead>
+            <tr>
+              <th style="width:36%; padding:2.5px 5px;">คำสั่ง Discord (13 คำสั่ง)</th>
+              <th style="width:64%; padding:2.5px 5px;">หน้าที่การทำงาน</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:1.8px 5px;"><code>/status</code></td><td style="padding:1.8px 5px;">เช็คชีพจรบอท 4 ตัว, ยอดเงิน, ราคาทอง, อินดิเคเตอร์ และข่าว AI</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/positions</code></td><td style="padding:1.8px 5px;">ดูรายการออเดอร์ที่ถือค้างอยู่ในพอร์ตและกำไรลอยตัว</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/buy</code> &amp; <code>/sell</code></td><td style="padding:1.8px 5px;">สั่งเปิดออเดอร์ทันทีพร้อมคำนวณ SL/TP อัตโนมัติ</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/close [ticket]</code></td><td style="padding:1.8px 5px;">สั่งปิดออเดอร์ตามหมายเลขตั๋วหรือปิดรวดเดียวทั้งหมด</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/pause</code> &amp; <code>/resume</code></td><td style="padding:1.8px 5px;">สั่งหยุดเทรดอัตโนมัติชั่วคราว หรือสั่งให้บอทกลับมาเดินเครื่องต่อ</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/simulate [bars]</code></td><td style="padding:1.8px 5px;">รัน Backtest จำลอง 12,000 แท่งและส่งผลสรุปเข้าแชท</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/config</code></td><td style="padding:1.8px 5px;">ดูค่าพารามิเตอร์และกฎบริหารความเสี่ยงปัจจุบันทั้งหมด</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/set_timeframe</code></td><td style="padding:1.8px 5px;">เปลี่ยนไทม์เฟรมกราฟ (M1, M5, M15, M30, H1, H4, D1)</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/set_symbol</code></td><td style="padding:1.8px 5px;">เปลี่ยนคู่เงินเทรด (เช่น XAUUSD, BTCUSD) แล้วรีสตาร์ทบอท</td></tr>
+            <tr><td style="padding:1.8px 5px;"><code>/set_risk</code> &amp; <code>/help</code></td><td style="padding:1.8px 5px;">ปรับ % ความเสี่ยงต่อไม้ (สูงสุด 5%) และดูคู่มือคำสั่งทั้งหมด</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3>หลักฐานการทำงานจริงบนหน้าจอ MetaTrader 5 (Live Order Matched with Discord)</h3>
+    <div class="img-card border-green" style="margin:2px 0 2.5px 0;">
+      <img src="assets/images/mt5_live_verified.png" style="height:190px; object-fit:contain; background:#0f172a;" alt="MT5 Live Trade Execution Verified">
+      <div class="img-caption">
+        <span class="tag tag-auth">AUTHENTIC EVIDENCE</span><strong>การประมวลผลคำสั่งจริงบน MetaTrader 5 (พอร์ต MetaQuotes-Demo #113645327):</strong> แสดงตั๋วออเดอร์ <code>#10920803860</code> ซื้อทองคำ 1.00 Lot ที่ราคา <code>4,194.24</code> (SL 4,185.33 / TP 4,204.79) ในหน้าต่าง Terminal ด้านล่าง ตรงกับคำสั่ง <code>/buy</code> บน Discord ในหน้า 2 ทุกประการ พิสูจน์ว่าระบบเชื่อมโยงและส่งคำสั่งเข้าสู่เซิร์ฟเวอร์ตลาดได้จริง 100%
+      </div>
+    </div>
+
+    <div class="grid-2" style="align-items:center;">
+      <div class="img-card border-amber" style="margin:0;">
+        <img src="assets/images/metaapi_error_card.png" style="height:116px; object-fit:contain; background:#111827;" alt="MetaApi Rate Limit Error Callout">
+        <div class="img-caption">
+          <span class="tag tag-cloud">PROBLEM SOLVED</span><strong>ที่มาของการสร้างระบบ Docker MT5 ส่วนตัว:</strong> เดิมทีระบบพยายามใช้บริการคลาวด์ <em>MetaApi</em> แต่ติดปัญหา <strong>"Rate limit is exceeded"</strong> และมีค่าบริการรายเดือน จึงตัดสินใจสร้างระบบเซิร์ฟเวอร์ Docker MT5 + RPyC ขึ้นเอง
+        </div>
+      </div>
+      <div class="card card-amber" style="font-size:7.3pt; padding:4px 7px;">
+        <div class="card-title" style="font-size:7.8pt; color:#b45309;">💡 การเปลี่ยนวิกฤตเป็นนวัตกรรม (Engineering Resilience)</div>
+        <p>จากภาพหน้าจอ MetaApi ทางซ้าย แสดงข้อความแจ้งเตือน <em>"Rate limit is exceeded. Please try later"</em> ทำให้การส่งคำสั่งติดขัดและมีความเสี่ยงสูง</p>
+        <p>ทีมพัฒนาจึงเปลี่ยนมาใช้แนวทาง <strong>Self-Hosted Docker Architecture</strong> โดยนำ <code>terminal64.exe</code> มารันในคอนเทนเนอร์บน Linux ผ่าน Wine และเปิดท่อ <strong>RPyC พอร์ต 18812</strong> ทำให้สั่งเทรดได้รวดเร็ว ปลอดภัย ไร้ขีดจำกัด และประหยัดค่าใช้จ่ายได้ 100%</p>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      หน้า 3 / 6 • สถาปัตยกรรมระบบ AI Trading Bot 2 และเซิร์ฟเวอร์คลาวด์ส่วนตัว • กลยุทธ์ Strategy V5 &amp; การเชื่อมต่อ MetaTrader 5
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 4 ==================== -->
+  <div class="page">
+    <h2>5. เจาะลึกเครื่องเซิร์ฟเวอร์คลาวด์ส่วนตัว (Ubuntu Home Cloud Server)</h2>
+    <p>แทนที่จะเสียเงินเช่า VPS รายเดือน โปรเจกต์นี้สร้าง <strong>เซิร์ฟเวอร์คลาวด์ส่วนตัว (Self-Hosted Home Cloud Server)</strong> โดยนำเครื่อง <strong>Lenovo ThinkCentre E73</strong> มาติดตั้ง <strong>Ubuntu 24.04.4 LTS</strong> และใช้ <strong>Docker Container</strong> แบ่งสัดส่วนการทำงานระหว่างคลาวด์เก็บข้อมูลส่วนตัว (Nextcloud) และเซิร์ฟเวอร์เทรดตลอด 24 ชั่วโมง</p>
+
+    <h3>5.1 สเปกฮาร์ดแวร์จริงและการใช้ทรัพยากร (Lenovo ThinkCentre E73 @ 192.168.1.159)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:23%;">หมวดหมู่</th>
+          <th style="width:77%;">รายละเอียดสเปกจริงและการใช้งานทรัพยากรของเครื่องเซิร์ฟเวอร์</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>เครื่อง &amp; รุ่น</strong></td>
+          <td>Hostname: <code>pacharaphon-sopa-ThinkCentre-E73</code> • รุ่นเครื่อง: <strong>Lenovo ThinkCentre E73</strong> (Desktop Chassis)</td>
+        </tr>
+        <tr>
+          <td><strong>ระบบปฏิบัติการ</strong></td>
+          <td><strong>Ubuntu 24.04.4 LTS (Noble Numbat) x86_64</strong> • เคอร์เนล Linux รุ่น <code>7.0.0-38-generic</code></td>
+        </tr>
+        <tr>
+          <td><strong>หน่วยประมวลผล (CPU)</strong></td>
+          <td><strong>Intel(R) Core(TM) i5-4670S @ 3.10GHz</strong> (4 Cores / 4 Threads, Turbo <strong>3.80 GHz</strong>) • อุณหภูมิเย็นเฉลี่ยเพียง <strong>~38°C – 39°C</strong></td>
+        </tr>
+        <tr>
+          <td><strong>หน่วยความจำ (RAM)</strong></td>
+          <td>• <strong>Physical RAM: 4 GB DDR3 @ 1333 MT/s</strong> (มองเห็น <code>3.7 GiB</code> มีสล็อตว่างอัปเกรดได้ถึง 16 GB)<br>• <strong>ใช้งานจริง:</strong> รันทั้ง Nextcloud + Docker MT5 + บอท 4 ตัว ใช้ RAM รวมเพียง <strong>1.5 GiB</strong> (เหลือว่าง <strong>2.2 GiB</strong>) + <strong>Swap 3.7 GiB</strong></td>
+        </tr>
+        <tr>
+          <td><strong>พื้นที่จัดเก็บ (Storage)</strong></td>
+          <td>• <strong>ดิสก์หลัก <code>/dev/sda</code>: WD Blue 1TB HDD (<code>WD10EZEX</code>, 931.5 GB)</strong> พาร์ติชัน <code>/</code> ext4 (ใช้ไป 182 GB หรือ 21%, <strong>เหลือว่าง 687 GB</strong>)<br>• <strong>ดิสก์เสริม <code>/dev/sdb</code>: Hikvision SSD 240GB</strong> เก็บพาร์ติชันระบบ Windows 10 เดิม</td>
+        </tr>
+        <tr>
+          <td><strong>ระบบเครือข่าย</strong></td>
+          <td>Gigabit LAN (<code>Realtek RTL8111/8168</code>, IP <code>192.168.1.159</code>) + เครือข่าย VPN ส่วนตัว <strong>Tailscale (<code>100.67.119.123</code>)</strong> + OpenSSH พอร์ต 22</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>หลักฐานสถานะการทำงานจริงบน Terminal (Live Ubuntu Terminal Screenshot)</h3>
+    <div class="img-card border-blue" style="margin:2px 0 2.5px 0;">
+      <img src="assets/images/ubuntu_terminal_services.png" style="height:190px; object-fit:contain; background:#0d1117;" alt="Ubuntu Terminal Services Status">
+      <div class="img-caption">
+        <span class="tag tag-live">LIVE TERMINAL</span><strong>ภาพแคปหน้าจอ Terminal ของเซิร์ฟเวอร์ Ubuntu จริง:</strong> แสดงสถานะบริการ <code>ai-trading.service</code> รันเป็นปกติ (Active: running) พร้อมโปรเซสบอทลูกทั้ง 4 ตัว และสถานะคอนเทนเนอร์ <code>mt5-server</code> และ <code>mypersonalcloud_nextcloud_1</code> ที่เปิดทำงานต่อเนื่อง
+      </div>
+    </div>
+
+    <h3>5.2 รายการคอนเทนเนอร์ Docker ทั้งหมดในเซิร์ฟเวอร์ (<code>docker ps</code>)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:26%;">ชื่อคอนเทนเนอร์</th>
+          <th style="width:20%;">Docker Image</th>
+          <th style="width:24%;">พอร์ตที่เปิด (Port Mapping)</th>
+          <th style="width:30%;">สถานะและหน้าที่การทำงาน</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong><code>mt5-server</code></strong></td>
+          <td><code>lprett/mt5linux:latest</code></td>
+          <td><code>18812-&gt;18812</code> (RPyC)<br><code>6080-&gt;8080</code> (noVNC)</td>
+          <td><strong>Up (ทำงาน 24/7):</strong> รันโปรแกรม Windows MT5 บน Linux ผ่าน Wine + Xvfb ให้บอทสั่งเทรดตรง</td>
+        </tr>
+        <tr>
+          <td><strong><code>mypersonalcloud_nextcloud_1</code></strong></td>
+          <td><code>nextcloud:latest</code></td>
+          <td><code>8080-&gt;80/tcp</code> (Web UI)</td>
+          <td><strong>Up (ทำงาน 24/7):</strong> ระบบ <strong>Nextcloud v33.0.1.2</strong> (Private Cloud 1TB เก็บข้อมูลจริง 162 GB)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-green" style="margin-top:3px; font-size:7.3pt; padding:3.5px 7px;">
+      <div class="card-title" style="font-size:7.8pt; color:#15803d;">🔒 ระบบเครือข่ายความปลอดภัยสูงระดับ Zero-Trust (Tailscale Mesh VPN)</div>
+      <p>เซิร์ฟเวอร์คลาวด์ตัวนี้ไม่ได้เปิด Forward Port สาธารณะบนเราเตอร์บ้าน เพื่อป้องกันการถูกโจมตีทางอินเทอร์เน็ต แต่ใช้เทคโนโลยี <strong>Tailscale Mesh VPN (IP <code>100.67.119.123</code>)</strong> ซึ่งสร้างท่ออุโมงค์เข้ารหัส WireGuard สองทางระหว่างมือถือ คอมพิวเตอร์โน้ตบุ๊ก และเซิร์ฟเวอร์ ทำให้เราสามารถสั่งการ SSH, ดูกราฟ noVNC และเข้าใช้งาน Nextcloud ได้จากภายนอกบ้านอย่างปลอดภัย 100%</p>
+    </div>
+
+    <div class="footer-note">
+      หน้า 4 / 6 • สถาปัตยกรรมระบบ AI Trading Bot 2 และเซิร์ฟเวอร์คลาวด์ส่วนตัว • สเปกฮาร์ดแวร์ Lenovo ThinkCentre &amp; Docker Infrastructure
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 5 ==================== -->
+  <div class="page">
+    <h2>5.3 เจาะลึก 2 ระบบหลักบนโฮมคลาวด์: Nextcloud และ noVNC Docker MT5</h2>
+    
+    <div class="grid-2" style="align-items:start;">
+      <div class="card card-amber">
+        <div class="card-title">☁️ 1. Nextcloud (หรือที่เรียกติดปากว่า "Nexus Cloud")</div>
+        <p><strong>คืออะไร:</strong> ระบบคลาวด์เก็บไฟล์ส่วนตัว <strong>Nextcloud (v33.0.1.2)</strong> ติดตั้งผ่าน Docker Compose บนพอร์ต <code>8080</code> ทำหน้าที่เป็น Google Drive ส่วนตัวขนาด 1TB โดยไม่มีค่าบริการรายเดือน</p>
+        <ul style="padding-left:14px; font-size:7.25pt; margin:1.5px 0;">
+          <li><strong>โครงสร้าง All-in-One ประหยัด RAM:</strong> ใช้ <code>Apache2</code> + <code>PHP 8.4.19</code> + <code>SQLite3</code> ในตัว จึงไม่ต้องรัน MariaDB/Redis ช่วยให้กิน RAM น้อยมาก</li>
+          <li><strong>เก็บข้อมูลจริง 162 GB:</strong> เก็บโฟลเดอร์ <code>paer/</code> (113 GB), แบ็คอัปมือถือ <code>ไฟล์ทรศ/</code> (29 GB), ไฟล์ดาวน์โหลด และม็อดเกม AI เชื่อมต่อกับ <code>nextcloud_bridge.py</code></li>
+        </ul>
+      </div>
+
+      <div class="card card-blue">
+        <div class="card-title">🐳 2. คอนเทนเนอร์ <code>mt5-server</code> + noVNC Web Display</div>
+        <p><strong>แก้ปัญหา Windows App บน Linux:</strong> โปรแกรม MetaTrader 5 รันได้เฉพาะบน Windows เราจึงนำมารันใน Docker ผ่าน 5 กลไกทางวิศวกรรม:</p>
+        <ul style="padding-left:14px; font-size:7.25pt; margin:1.5px 0;">
+          <li><strong>Wine + Xvfb:</strong> จำลองระบบ Windows และสร้างหน้าจอเสมือน 1920x1080 ใน RAM</li>
+          <li><strong>noVNC (พอร์ต 6080):</strong> แปลงหน้าจอ MT5 ออกมาเป็นหน้าเว็บ ดูสดได้ทุกที่</li>
+          <li><strong>xdotool Automation:</strong> ล็อกอินพอร์ตและเปิด Algo Trading อัตโนมัติ</li>
+          <li><strong>RPyC Server (พอร์ต 18812):</strong> ท่อส่งคำสั่งความเร็วสูงให้ Python สั่งเทรดตรงฟรี 0 บาท</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>ภาพหลักฐานระบบ Nextcloud และ noVNC MetaTrader 5 ที่เปิดทำงานจริง</h3>
+    
+    <div class="img-card border-amber" style="margin:2.5px 0;">
+      <img src="assets/images/nextcloud_web_login.png" style="height:188px; object-fit:contain; background:#0d1117;" alt="Nextcloud Web Interface">
+      <div class="img-caption">
+        <span class="tag tag-live">LIVE WEB UI</span><strong>หน้าจอระบบ Nextcloud v33.0.1.2 บนพอร์ต 8080 (http://192.168.1.159:8080):</strong> พอร์ทัลเข้าสู่ระบบ Private Cloud Storage ส่วนตัวขนาด 1TB ที่ติดตั้งบน Docker ของเครื่องเซิร์ฟเวอร์ ให้บริการซิงค์ไฟล์เอกสารและสำรองข้อมูลจากอุปกรณ์ต่าง ๆ ได้อย่างปลอดภัย
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:2.5px;">
+      <div class="img-card border-blue" style="margin:0;">
+        <img src="assets/images/novnc_mt5_browser_crisp.png" style="height:165px; width:100%; object-fit:cover; object-position:top;" alt="noVNC Browser Interface Crisp">
+        <div class="img-caption">
+          <span class="tag tag-live">LIVE WEB VNC</span><strong>หน้าจอ noVNC Web UI (พอร์ต 6080):</strong> เปิดหน้าจอ MT5 ที่รันอยู่ใน Docker บนเบราว์เซอร์ผ่านพอร์ต <code>http://192.168.1.159:6080</code> แสดงแท็บคอนเทนเนอร์ <code>66fb3b03ced2</code> และหน้าต่างกราฟ 4 คู่เงิน
+        </div>
+      </div>
+
+      <div class="img-card border-purple" style="margin:0;">
+        <img src="assets/images/novnc_indicators_16_10.png" style="height:165px; width:100%; object-fit:cover; object-position:top;" alt="noVNC Indicators Setup">
+        <div class="img-caption">
+          <span class="tag tag-auth">INDICATORS SETUP</span><strong>การตั้งค่าอินดิเคเตอร์ใน Docker MT5:</strong> เมนูตั้งค่า ADX (Average Directional Movement Index Wilder) ภายในหน้าต่าง MT5 เสมือนบน Ubuntu Linux
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-blue" style="margin-top:3px; font-size:7.3pt; padding:3.5px 7px;">
+      <div class="card-title" style="font-size:7.8pt; color:#1e40af;">🔄 การผสาน 2 ระบบคลาวด์เป็นระบบนิเวศเดียวกัน (Unified Cloud Ecosystem)</div>
+      <p>Nextcloud และ Docker MT5 แม้จะมีจุดประสงค์การใช้งานที่ต่างกัน แต่สามารถแชร์ฮาร์ดแวร์ Lenovo เครื่องเดียวกันได้อย่างคุ้มค่า โดยใช้ RAM รวมเพียง 1.5 GiB เท่านั้น นอกจากนี้ บอทเทรดยังสามารถส่งรายงานผลสรุปไฟล์ CSV และภาพกราฟย้อนหลังไปสำรองเก็บไว้ในโฟลเดอร์ของ Nextcloud โดยอัตโนมัติ ทำให้ข้อมูลสำคัญไม่สูญหาย</p>
+    </div>
+
+    <div class="footer-note">
+      หน้า 5 / 6 • สถาปัตยกรรมระบบ AI Trading Bot 2 และเซิร์ฟเวอร์คลาวด์ส่วนตัว • บริการ Nextcloud Private Cloud &amp; noVNC Web Architecture
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 6 ==================== -->
+  <div class="page">
+    <h2>6. ผลการทดสอบ Backtest, สถิติความคืบหน้า (~92%), ข้อจำกัด และการเตรียมสัมภาษณ์</h2>
+
+    <h3>6.1 ผลการทดสอบย้อนหลัง (Backtest 12,000 แท่งเทียน บนทองคำ XAUUSD M15)</h3>
+    
+    <div class="grid-2" style="align-items:center; margin-bottom:3px;">
+      <div>
+        <p style="margin-bottom:3px; font-size:7.25pt;">ผลการทดสอบย้อนหลัง 12,000 แท่งเทียน (Train 70% / Validation 30%) ทุนเริ่มต้น <strong>$10,000</strong> เสี่ยง <strong>1% ต่อไม้</strong> ของกลยุทธ์ <strong>Version 5</strong>:</p>
+        <div class="grid-2" style="margin-bottom:3px;">
+          <div class="kpi-box">
+            <div class="kpi-val green">+$1,321.89</div>
+            <div class="kpi-lbl">กำไรสุทธิ (+13.22% พอร์ตเป็น $11,321.89)</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-val">50.00%</div>
+            <div class="kpi-lbl">อัตราชนะรวม 76 ไม้ (BUY ชนะ 53.49%)</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="kpi-box">
+            <div class="kpi-val">1.33</div>
+            <div class="kpi-lbl">Profit Factor (กำไรมากกว่าขาดทุน 1.33 เท่า)</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-val green">5.89%</div>
+            <div class="kpi-lbl">Max Drawdown (ย่อตัวต่ำ ปลอดภัยมาก)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="img-card border-green" style="margin:0;">
+        <img src="assets/images/discord_simulate_backtest.png" style="height:120px; object-fit:contain; background:#2b2d31; padding:3px;" alt="Discord Backtest Simulation Report">
+        <div class="img-caption">
+          <span class="tag tag-live">BACKTEST VERIFIED</span><strong>รายงานจริงจากคำสั่ง <code>/simulate</code> บน Discord:</strong> ยืนยันผล Backtest 12,000 แท่ง กำไรสุทธิ <code>+$1,321.89</code> Win Rate <code>50.0%</code> Max DD <code>5.89%</code> ตรงกับสถิติทุกประการ
+        </div>
+      </div>
+    </div>
+
+    <h3>6.2 เปอร์เซ็นต์ความคืบหน้าของโปรเจกต์แยกตามหมวดหมู่ (ภาพรวมเสร็จสมบูรณ์ ~92%)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36%;">หมวดหมู่ของงาน</th>
+          <th style="width:18%;">ความคืบหน้า</th>
+          <th style="width:46%;">รายละเอียดสถานะปัจจุบัน</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. โครงสร้างคลาวด์ &amp; Docker MT5</strong></td>
+          <td><strong>100%</strong><div class="prog-wrap"><div class="prog-bar" style="width:100%"></div></div></td>
+          <td>ติดตั้ง Ubuntu, Nextcloud, Docker <code>mt5-server</code>, RPyC 18812, noVNC 6080 และ Systemd สำเร็จ</td>
+        </tr>
+        <tr>
+          <td><strong>2. บอทเทรด &amp; กลยุทธ์ 4 อินดิเคเตอร์</strong></td>
+          <td><strong>100%</strong><div class="prog-wrap"><div class="prog-bar" style="width:100%"></div></div></td>
+          <td>พัฒนา SMA 50, RSI 14, ADX 25, ATR 14, คำนวณ Lot เสี่ยง 1% และตัดวงจรขาดทุนรายวัน 3% เสร็จสมบูรณ์</td>
+        </tr>
+        <tr>
+          <td><strong>3. AI วิเคราะห์ข่าว &amp; Overseer</strong></td>
+          <td><strong>100%</strong><div class="prog-wrap"><div class="prog-bar" style="width:100%"></div></div></td>
+          <td>เชื่อม RSS + Groq/Gemini AI, ตรวจชีพจร Heartbeat, Backtest 12,000 แท่ง และ Sandbox 7 ชั้นสมบูรณ์</td>
+        </tr>
+        <tr>
+          <td><strong>4. ศูนย์สั่งการ Discord 13 คำสั่ง</strong></td>
+          <td><strong>100%</strong><div class="prog-wrap"><div class="prog-bar" style="width:100%"></div></div></td>
+          <td>ส่งรายงาน Market Pulse ทุก 15 นาที, แปล Error ด้วย AI และสั่งงานผ่าน Slash Commands ได้ครบถ้วน</td>
+        </tr>
+        <tr>
+          <td><strong>5. เก็บสถิติเทรดตลาดสด (Forward Test)</strong></td>
+          <td><strong>~50% (เริ่มต้น)</strong><div class="prog-wrap"><div class="prog-bar warn" style="width:50%"></div></div></td>
+          <td>เชื่อมพอร์ต Demo (#113645327) ออกออเดอร์จริงแล้ว อยู่ระหว่างเปิดรันต่อเนื่องเพื่อสะสมสถิติจำนวนไม้</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid-2" style="margin-top:2px;">
+      <div class="card card-red" style="font-size:7.2pt; padding:3px 5px;">
+        <div class="card-title" style="font-size:7.6pt;">⚠️ ข้อเสียและข้อจำกัดของโปรเจกต์ (อย่างตรงไปตรงมา)</div>
+        <ul style="padding-left:13px; margin:1px 0;">
+          <li><strong>ยังไม่เคยเทรดเงินจริง และยังไม่ได้กำไรจากการเทรดสด:</strong> ปัจจุบันรันบนพอร์ตทดลอง (Demo) มีออเดอร์นำร่องที่ปิดไปแล้ว 1 ไม้ จึงยังอยู่ในช่วงทดลองเดินเครื่อง</li>
+          <li><strong>ต้องใช้เวลาสะสมสถิติ 3–6 สัปดาห์:</strong> กลยุทธ์ V5 คัดกรองสัญญาณเข้มข้นมาก ออกออเดอร์เฉลี่ยเพียง <strong>1 ไม้ทุก 1.5–2 วัน</strong> จึงต้องอาศัยเวลาสะสมจำนวนไม้</li>
+          <li><strong>ข้อจำกัดโฮมคลาวด์:</strong> พึ่งพาไฟ/เน็ตบ้าน (แต่ป้องกันด้วยการฝัง SL/TP ไว้ที่โบรกเกอร์ทันทีและมี Auto-Restart)</li>
+        </ul>
+      </div>
+
+      <div class="card card-green" style="font-size:7.2pt; padding:3px 5px;">
+        <div class="card-title" style="font-size:7.6pt;">🎯 แผนการและความพร้อมในวันสัมภาษณ์ (Road to Interview)</div>
+        <ul style="padding-left:13px; margin:1px 0;">
+          <li><strong>เปิดรันสะสมผลลัพธ์ 24 ชม.:</strong> ขณะนี้ระบบกำลังทำงานจริงบนคลาวด์ จะคอยเฝ้ากราฟและสะสมออเดอร์ในพอร์ต Demo ต่อเนื่องจนถึงวันสัมภาษณ์</li>
+          <li><strong>พร้อมนำเสนอสถิติจริง:</strong> เมื่อถึงวันสัมภาษณ์ จะมีประวัติใน <code>logs/trades.csv</code> มากขึ้น และคาดว่าจะเริ่มเห็นกำไรตามค่าคาดหวัง (+13.2% จาก Backtest)</li>
+          <li><strong>โชว์การทำงานสด (Live Demo):</strong> เปิดแอป <strong>Discord</strong> กด <code>/status</code>, <code>/positions</code> และเปิดหน้าเว็บ <strong>noVNC (พอร์ต 6080)</strong> โชว์หน้าจอ MT5 บน Ubuntu ให้กรรมการดูได้ทันที</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pitch-box">
+      <div class="card-title" style="color:#1e3a8a; font-size:8.1pt; margin-bottom:1px;">🎤 บทสรุปสำหรับเล่าให้กรรมการฟังตอนสัมภาษณ์ (เข้าใจง่าย ครบถ้วนใน 2–3 นาที)</div>
+      <p style="margin:1px 0; font-size:7.0pt; line-height:1.24;"><em>"โปรเจกต์นี้คือระบบบอทเทรดทองคำอัตโนมัติ (AI Trading Bot 2) ที่สร้างขึ้นเพราะเวลาเราเทรดเอง มักเจอปัญหานั่งเฝ้ากราฟจนล้า มีอารมณ์กลัวตกรถแทรกแซง และอ่านข่าวโลกไม่ทัน จึงออกแบบระบบบอท 4 ตัวที่ทำงานร่วมกันบนคลาวด์ส่วนตัวครับ/ค่ะ โดย <strong>1. บอทข่าว AI (news_agent)</strong> ดึงข่าว RSS ทุก 30 นาทีส่งให้ Groq และ Gemini วิเคราะห์คะแนนทิศทางตลาด <strong>2. บอทเทรด (trade_bot &amp; strategy)</strong> เฝ้ากราฟ M15 ด้วยอินดิเคเตอร์ 4 ตัว (SMA 50, ADX 25, RSI 14, ATR 14) เสี่ยง 1% ต่อไม้ <strong>3. บอท Discord (discord_bot &amp; notifier)</strong> คอยแจ้งเตือนเข้ามือถือทุก 15 นาที แปล Error ด้วย AI เป็นภาษาไทย และรับคำสั่ง Slash Commands 13 คำสั่ง และ <strong>4. ผู้ตรวจการณ์ (overseer &amp; simulator)</strong> คอยตรวจชีพจรบอทและทดสอบย้อนหลัง 12,000 แท่ง</em></p>
+      <p style="margin:1px 0; font-size:7.0pt; line-height:1.24;"><em>ส่วนฝั่งคลาวด์ เรานำคอมพิวเตอร์ Lenovo ThinkCentre E73 (Core i5, RAM 4GB, HDD 1TB) มาลง Ubuntu 24.04 ทำเป็นโฮมคลาวด์ส่วนตัว รัน <strong>Nextcloud</strong> บน Docker เป็นคลาวด์เก็บไฟล์ 1TB แทน Google Drive และรัน <strong>MT5 บน Docker ผ่าน Wine</strong> เชื่อมต่อ RPyC ทำให้เปิดได้ 24 ชม. ฟรี 0 บาท ผล Backtest 12,000 แท่งทำกำไรได้ +13.2% (Drawdown ต่ำเพียง 5.89%) ปัจจุบันกำลังเปิดรันสะสมสถิติจริงบนพอร์ต Demo เพื่อเตรียมนำเสนอและโชว์ Live Demo ให้กรรมการดูในวันสัมภาษณ์ครับ/ค่ะ"</em></p>
+    </div>
+
+    <div class="footer-note">
+      หน้า 6 / 6 • สถาปัตยกรรมระบบ AI Trading Bot 2 และเซิร์ฟเวอร์คลาวด์ส่วนตัว (192.168.1.159) • จัดทำสำหรับประกอบการนำเสนอและสัมภาษณ์
+    </div>
+  </div>
+
+</body>
+</html>

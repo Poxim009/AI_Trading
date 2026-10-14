@@ -1,0 +1,19 @@
+=== UPTIME ===
+15:49:28 up 17:34,  3 users,  load average: 0.97, 0.78, 0.59
+
+=== DOCKER PS ===
+NAMES                         IMAGE          STATUS       PORTS
+mt5-server                    aa433dcba7e3   Up 5 hours   5901/tcp, 0.0.0.0:18812->18812/tcp, [::]:18812->18812/tcp, 0.0.0.0:6080->8080/tcp, [::]:6080->8080/tcp
+mypersonalcloud_nextcloud_1   nextcloud      Up 3 days    0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+
+=== SYSTEMD SERVICE ===
+Error: 'NoneType' object has no attribute 'strip'
+
+=== MEMORY ===
+total        used        free      shared  buff/cache   available
+Mem:           3.7Gi       1.7Gi       151Mi        48Mi       2.2Gi       2.1Gi
+Swap:          3.7Gi       844Ki       3.7Gi
+
+=== DISK ===
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2       915G  182G  687G  21% /
